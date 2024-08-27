@@ -3,39 +3,9 @@ import uvicorn
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 import numpy as np
-
-def print_colored(text, color):
-    """Print text in color"""
-    if color == "red":
-        print("\033[91m {}\033[00m" .format(text))
-    elif color == "green":
-        print("\033[92m {}\033[00m" .format(text))
-    elif color == "yellow":
-        print("\033[93m {}\033[00m" .format(text))
-    elif color == "blue":
-        print("\033[94m {}\033[00m" .format(text))
-    elif color == "magenta":
-        print("\033[95m {}\033[00m" .format(text))
-    elif color == "cyan":
-        print("\033[96m {}\033[00m" .format(text))
-    elif color == "white":
-        print("\033[97m {}\033[00m" .format(text))
-    elif color == "black":
-        print("\033[98m {}\033[00m" .format(text))
-    else:
-        print("\033[99m {}\033[00m" .format(text))
-
-
-class DummyModel:
-    def predict(self, X):
-        return "dummy prediction"
-
-def load_model():
-    predictor = DummyModel()
-    return predictor
+import os
 
 app = FastAPI()
-app.predictor = load_model()
 
 # http://10.103.0.19:8888/query?query=myquery
 
@@ -45,8 +15,11 @@ def read_hello():
 
 @app.get("/query")
 def query_route(query: str = Query(..., description="Search query")):
+
     # pegar musicas.csv e transformar em um DataFrame:
-    route = "../data/musicas.csv"
+    current_dir = os.path.dirname(__file__)
+    route = os.path.join(current_dir, "../data/musicas.csv")
+
     df = pd.read_csv(route, delimiter='|')
     
     # criar um vetorizador TF-IDF
@@ -79,7 +52,7 @@ def query_route(query: str = Query(..., description="Search query")):
     return {"results": retorno, "message": "OK"}
 
 def run():
-    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=1530, reload=True)
 
 if __name__ == "__main__":
     run()
