@@ -1,5 +1,4 @@
 from fastapi import FastAPI, Query
-import os
 import uvicorn
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
